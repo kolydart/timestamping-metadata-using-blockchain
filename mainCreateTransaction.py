@@ -14,9 +14,9 @@ Create project on infura.io
 
 from web3 import Web3, HTTPProvider
 
-address = 'WALLET_ADDRESS'
-pk = "PRIVATE_KEY"
-apikey = 'API_KEY'
+address = 'WALLET_ADDRESS' # set value to your wallet's address
+pk = "PRIVATE_KEY" # set value to your private key; caution! do not share the key with anyone
+apikey = 'API_KEY' # set this to your own api key, if using infura.io
 provider = 'https://mainnet.infura.io/v3/'+apikey
 record_utf8 = """
 {

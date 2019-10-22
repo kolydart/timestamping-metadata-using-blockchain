@@ -15,8 +15,8 @@ Create project on infura.io
 
 from web3 import Web3, HTTPProvider
 
-address = 'WALLET_ADDRESS'
-pk = "PRIVATE_KEY"
+address = 'WALLET_ADDRESS' # set value to your wallet's address
+pk = "PRIVATE_KEY" # set value to your private key; caution! do not share the key with anyone
 provider = 'https://ropsten.infura.io'
 record_utf8 = """
 {
