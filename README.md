@@ -4,7 +4,7 @@ Example code for timestamping any digital document in blockchain. Using web3 pac
 
 ## Getting Started
 
-Download repository, update variables and run each python script.
+Download repository, update variables and run each python script. The scripts are already populated with metadata from a composer's digital score.
 
 ### Prerequisites
 
