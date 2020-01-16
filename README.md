@@ -13,6 +13,13 @@ Download repository, update variables and run each python script. The scripts ar
 
 
 ### Installing
+web3 package is required:
+```
+pip install web3
+```
+
+
+### Quick guide
 
 ```
 git clone https://github.com/kolydart/timestamping-metadata-using-blockchain.git
