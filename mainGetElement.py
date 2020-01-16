@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """Get element from transaction input data using main ethereum network via infura.io node
-on ropsten test ethereum network
+on main ethereum network
 @see https://web3py.readthedocs.io
 Preparation (applies only on first usage): 
 Create project on infura.io & save api key
