@@ -16,7 +16,7 @@ Download repository, update variables and run each python script. The scripts ar
 
 ```
 git clone https://github.com/kolydart/timestamping-metadata-using-blockchain.git
-cd timestamping-metadata-using-blockchain
+cd timestamping-metadata-using-blockchain-master
 ./testGetElement.py
 ```
 
