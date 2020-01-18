@@ -16,6 +16,7 @@ Download repository, update variables and run each python script. The scripts ar
 web3 package is required:
 ```
 pip install web3
+pip install json
 ```
 
 
