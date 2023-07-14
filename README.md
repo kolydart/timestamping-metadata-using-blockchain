@@ -2,6 +2,11 @@
 
 Example code for timestamping any digital document in blockchain. Using web3 package to create transactions on main ethereum network & test network via infura.io node.
 
+Long-term preservation of digital information requires confidence in the credibility and ability of digital archives and systems to consistently provide accessible and usable content. Ensuring that the provided information has remained unchanged over time is a particular challenge. Trusted timestamping is an effective method that allows anyone to prove without any doubt that specific content existed at a particular date and time. A practical approach for trusted timestamping using the Ethereum blockchain is presented here. A complete metadata record is stored as transaction input data along with a document hash digest. The approach is uncomplicated, human and machine readable, self-explanatory, and modular. It supports metadata preservation and copyright protection of digital documents applying verification without disclosure. The approach aims at extending current digital archives and systems using existing, well-tested technology.
+
+Read the full paper:
+https://link.springer.com/chapter/10.1007/978-3-030-36599-8_42
+
 ## Getting Started
 
 Download repository, update variables and run each python script. The scripts are already populated with metadata from a composer's digital score.
