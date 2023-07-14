@@ -44,7 +44,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Author
 
-* **Tassos Kolydas** - (https://kolydart.gr/en/)
+* **Tassos Kolydas** - (https://www.kolydart.gr/en/)
 
 ## License
 
