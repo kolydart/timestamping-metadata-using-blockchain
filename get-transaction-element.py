@@ -20,9 +20,16 @@ class GreekEncoder(json.JSONEncoder):
 
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="Get transaction data from Ethereum network")
-parser.add_argument("--hash", default="0x962e3baa09fb0ed307aad4085f90b21f4c54826781b72763193af6a84981278b", help="Transaction hash to retrieve data from")
-parser.add_argument("--network", choices=['test', 'main'], default='testnet', help="Choose between testnet (Sepolia) and mainnet (default: testnet)")
+parser.add_argument("--network", choices=['testnet', 'mainnet'], default='testnet', help="Choose between testnet (Sepolia) and mainnet (default: testnet)")
+parser.add_argument("--hash", help="Transaction hash to retrieve data from")
 args = parser.parse_args()
+
+# If no hash is provided, use the default
+if args.hash is None:
+  if args.network == 'testnet':
+      args.hash = '0x7a67ba73634cef953ca1f5ac36ab49490d345815e54966b5d65af4e6bfb75834'
+  else:
+      args.hash = '0x1181851f70db387c12d75bf17c0a2d20220fbd945d86d961b3c1325d10c63476'
 
 # Load environment variables from .env file
 if args.network == 'testnet':
