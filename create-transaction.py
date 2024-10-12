@@ -22,15 +22,15 @@ import json
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="Create transaction on Ethereum network")
 parser.add_argument("--network", choices=['testnet', 'mainnet'], default='testnet', help="Choose between testnet (Sepolia) and mainnet (default: testnet)")
-parser.add_argument("--title", default="Fiction Moments", help="dc.Title")
-parser.add_argument("--creator", default="Σφέτσας, Κυριάκος (Sfetsas, Kyriakos)", help="dc.Creator")
-parser.add_argument("--description", default="Proof of composition", help="dc.Description")
-parser.add_argument("--identifier", default="https://www.kolydart.gr/handle/1001", help="dc.Identifier")
-parser.add_argument("--format", default="application/pdf", help="dc.Format")
-parser.add_argument("--rights", default="All rights reserved by the author", help="dc.Rights")
-parser.add_argument("--source", default="https://www.kolydart.gr/download?name=fiction-moments", help="dc.Source")
-parser.add_argument("--hash", default="52974bec2f5c33209f60acc1cd1f86ccfbefb39b0cba63162d236bc749c7a2622b5b83fc5d5de9e6a9d500374db2bd1434e3338472a16d113ee352786a0b007a", help="kolydas.Hash")
-parser.add_argument("--hash-type", default="sha512sum", help="kolydas.Hash.Type")
+parser.add_argument("--title", help="dc.Title")
+parser.add_argument("--creator", help="dc.Creator")
+parser.add_argument("--description", help="dc.Description")
+parser.add_argument("--identifier", help="dc.Identifier")
+parser.add_argument("--format", help="dc.Format")
+parser.add_argument("--rights", help="dc.Rights")
+parser.add_argument("--source", help="dc.Source")
+parser.add_argument("--hash", help="kolydas.Hash")
+parser.add_argument("--hash-type", help="kolydas.Hash.Type")
 args = parser.parse_args()
 
 # Load environment variables from .env file
@@ -83,6 +83,22 @@ if args.hash:
     record_data["kolydas.Hash"] = args.hash
 if args.hash_type:
     record_data["kolydas.Hash.Type"] = args.hash_type
+
+# If no arguments were provided, use the default JSON
+if not record_data:
+    record_data = json.loads("""
+    {
+      "dc.Title": "Fiction Moments",
+      "dc.Creator": "Σφέτσας, Κυριάκος (Sfetsas, Kyriakos)",
+      "dc.Description": "Proof of composition",
+      "dc.Identifier": "https://www.kolydart.gr/handle/1001",
+      "dc.Format": "application/pdf",
+      "dc.Rights": "All rights reserved by the author",
+      "dc.Source": "https://www.kolydart.gr/download?name=fiction-moments",
+      "kolydas.Hash": "52974bec2f5c33209f60acc1cd1f86ccfbefb39b0cba63162d236bc749c7a2622b5b83fc5d5de9e6a9d500374db2bd1434e3338472a16d113ee352786a0b007a",
+      "kolydas.Hash.Type": "sha512sum"
+    }
+    """)
 
 record_utf8 = json.dumps(record_data, ensure_ascii=False, indent=2)
 print("JSON Record:")
