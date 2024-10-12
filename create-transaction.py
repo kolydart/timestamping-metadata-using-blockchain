@@ -18,10 +18,24 @@ import os
 import time
 import argparse
 import json
+import requests
+from web3.exceptions import ContractLogicError
+from decimal import Decimal
+
+
+def get_eth_price():
+    try:
+        response = requests.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
+        data = response.json()
+        return data['ethereum']['usd']
+    except Exception as e:
+        print(f"Failed to get ETH price: {e}")
+        return None
 
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="Create transaction on Ethereum network")
 parser.add_argument("--network", choices=['testnet', 'mainnet'], default='testnet', help="Choose between testnet (Sepolia) and mainnet (default: testnet)")
+parser.add_argument("--force", action="store_true", help="Force transaction without confirmation")
 parser.add_argument("--title", help="dc.Title")
 parser.add_argument("--creator", help="dc.Creator")
 parser.add_argument("--description", help="dc.Description")
@@ -107,22 +121,47 @@ print(record_utf8)
 record_hex = "0x" + record_utf8.encode("utf-8").hex()  # convert string to hex
 
 try:
+    balance = w3.eth.get_balance(address)
+    estimated_gas = w3.eth.estimate_gas({'to': address, 'from': address, 'value': 0, 'data': record_hex})
+    gas_price = w3.eth.gas_price
+    total_cost_wei = estimated_gas * gas_price
+    total_cost_eth = w3.from_wei(total_cost_wei, 'ether')
+
+    print(f"\nEstimated transaction cost: {total_cost_eth:.8f} ETH")
+
+    if args.network == 'mainnet' and not args.force:
+        eth_price = get_eth_price()
+        if eth_price is not None:
+            total_cost_usd = float(total_cost_eth) * eth_price
+            print(f"Estimated cost in USD: ${total_cost_usd:.2f}")
+
+        if balance < total_cost_wei:
+          print(f"\nInsufficient funds. Your balance: {w3.from_wei(balance, 'ether'):.8f} ETH (${float(w3.from_wei(balance, 'ether')) * eth_price:.2f})")
+          print(f"You need at least {w3.from_wei(total_cost_wei - balance, 'ether'):.8f} more ETH")
+          exit(1)
+
+        confirm = input("\nYou are about to send a transaction on the Ethereum mainnet. Do you want to proceed? (yes/no): ").lower()
+        if confirm != 'yes':
+            print("Transaction cancelled by user.")
+            exit(0)
+
     transaction_content = {
         'nonce': w3.eth.get_transaction_count(address),
-        'gasPrice': w3.eth.gas_price,
-        'gas': w3.eth.estimate_gas({'to': address, 'from': address, 'value': 0, 'data': record_hex}),
+        'gasPrice': gas_price,
+        'gas': estimated_gas,
         'to': address,
         'value': 0,
         'data': record_hex,
-    }  # prepare transaction content
+    }
 
-    signed_txn = w3.eth.account.sign_transaction(transaction_content, pk)  # sign transaction
-    transaction_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)  # send transaction
-    print(f"Transaction hash: 0x{transaction_hash.hex()}")  # retrieve transaction hash
+    signed_txn = w3.eth.account.sign_transaction(transaction_content, pk)
+    transaction_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
+    print(f"\nTransaction hash: 0x{transaction_hash.hex()}")
 
-    # Wait for the transaction to be mined
     transaction_receipt = w3.eth.wait_for_transaction_receipt(transaction_hash)
     print(f"Transaction was mined in block {transaction_receipt['blockNumber']}")
 
+except ContractLogicError as e:
+    print(f"Contract logic error: {e}")
 except Exception as e:
     print(f"An error occurred: {e}")
