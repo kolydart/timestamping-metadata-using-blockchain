@@ -53,7 +53,7 @@ record_utf8 = """
   "kolydas.Hash.Type": "sha512sum"
 }
 """
-record_hex = "0x" + "".join(record_utf8.split()).encode("utf-8").hex()  # convert string to hex & remove all whitespaces
+record_hex = "0x" + " ".join(record_utf8.split()).encode("utf-8").hex() # convert string to hex & remove double whitespaces
 
 try:
     transaction_content = {
