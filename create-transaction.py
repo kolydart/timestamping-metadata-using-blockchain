@@ -32,6 +32,21 @@ def get_eth_price():
         print(f"Failed to get ETH price: {e}")
         return None
 
+def get_optimal_gas_price(w3):
+    """Get an optimal gas price based on network conditions."""
+    # Get the latest gas price suggestion
+    gas_price = w3.eth.gas_price
+
+    # Optionally, reduce it by a small percentage (e.g., 10%)
+    # Be cautious: setting it too low might cause your transaction to be stuck
+    return int(gas_price * 0.9)  # 90% of the suggested gas price
+
+def estimate_gas_with_buffer(w3, transaction):
+    """Estimate gas with a small buffer to ensure transaction success."""
+    estimated_gas = w3.eth.estimate_gas(transaction)
+    # Add a 10% buffer to the estimated gas
+    return int(estimated_gas * 1.1)
+
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="Create transaction on Ethereum network")
 parser.add_argument("--network", choices=['testnet', 'mainnet'], default='testnet', help="Choose between testnet (Sepolia) and mainnet (default: testnet)")
@@ -122,8 +137,19 @@ record_hex = "0x" + record_utf8.encode("utf-8").hex()  # convert string to hex
 
 try:
     balance = w3.eth.get_balance(address)
-    estimated_gas = w3.eth.estimate_gas({'to': address, 'from': address, 'value': 0, 'data': record_hex})
-    gas_price = w3.eth.gas_price
+
+    # Use our custom functions to get optimal gas values
+    gas_price = get_optimal_gas_price(w3)
+
+    # Create a sample transaction to estimate gas
+    sample_transaction = {
+        'to': address,
+        'from': address,
+        'value': 0,
+        'data': record_hex,
+    }
+    estimated_gas = estimate_gas_with_buffer(w3, sample_transaction)
+
     total_cost_wei = estimated_gas * gas_price
     total_cost_eth = w3.from_wei(total_cost_wei, 'ether')
 
