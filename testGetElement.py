@@ -8,12 +8,19 @@ from web3 import Web3, HTTPProvider
 import json
 from dotenv import load_dotenv
 import os
+import argparse
 
 class GreekEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, str):
             return obj.encode('utf-8').decode('utf-8')
         return super(GreekEncoder, self).default(obj)
+
+# Set up argument parsing
+parser = argparse.ArgumentParser(description="Get transaction data from Sepolia network")
+parser.add_argument("--hash", default="0x962e3baa09fb0ed307aad4085f90b21f4c54826781b72763193af6a84981278b",
+                    help="Transaction hash to retrieve data from")
+args = parser.parse_args()
 
 # Load environment variables from .env file
 load_dotenv('.env.testing')
@@ -22,8 +29,6 @@ apikey = os.environ.get('API_KEY')
 if not apikey:
     raise ValueError("API_KEY not found in .env.testing file")
 
-# This is a sample transaction hash from Sepolia. You'll need to replace it with a valid one.
-transaction_hash = '0x962e3baa09fb0ed307aad4085f90b21f4c54826781b72763193af6a84981278b'
 provider = f'https://sepolia.infura.io/v3/{apikey}'
 
 w3 = Web3(HTTPProvider(provider))  # connect to blockchain network node
@@ -32,10 +37,10 @@ if not w3.is_connected():
     raise Exception("Failed to connect to Ethereum Sepolia network")
 
 try:
-    transaction = w3.eth.get_transaction(transaction_hash)  # get transaction
+    transaction = w3.eth.get_transaction(args.hash)  # get transaction
 
     if transaction is None:
-        raise Exception(f"Transaction with hash {transaction_hash} not found")
+        raise Exception(f"Transaction with hash {args.hash} not found")
 
     input_data = transaction.input  # get record from transaction input data
 
